@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="sd" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سنڌي ٽائپ ماسٽر — Sindhi TypeMaster</title>
+  <meta name="description" content="سنڌي ٽائپنگ ٽيسٽ — ويڪيپيڊيا مان حقيقي سنڌي متن سان ٽائپنگ جي مشق ڪريو. Practice Sindhi typing with real Wikipedia text, virtual keyboard, WPM tracking, and accuracy metrics.">
+  <meta name="keywords" content="Sindhi, typing test, سنڌي, ٽائپنگ, WPM, keyboard practice">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- Warning Toast (for rejected keystrokes) -->
+  <div id="warning-toast" class="warning-toast" role="alert" aria-live="assertive">
+    <span class="warning-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
+    <span id="warning-text">صرف سنڌي ۾ لکو</span>
+  </div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-section">
+        <h1 class="logo">
+          <span class="logo-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 10h.01"/><path d="M10 10h.01"/><path d="M14 10h.01"/><path d="M18 10h.01"/><path d="M8 14h8"/></svg></span>
+          <span class="logo-text-sd">سنڌي ٽائپ ماسٽر</span>
+        </h1>
+      </div>
+    </header>
+
+    <!-- Mode Selector -->
+    <nav class="mode-selector" aria-label="Typing mode selection">
+      <div class="mode-buttons">
+        <button class="mode-btn active" data-mode="time" id="mode-time">
+          <span class="mode-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+          <span class="mode-label">وقت</span>
+        </button>
+        <button class="mode-btn" data-mode="words" id="mode-words">
+          <span class="mode-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></span>
+          <span class="mode-label">لفظ</span>
+        </button>
+        <button class="mode-btn" data-mode="zen" id="mode-zen">
+          <span class="mode-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 12h8"/></svg></span>
+          <span class="mode-label">آزاد</span>
+        </button>
+        <button class="mode-btn" data-mode="sentence" id="mode-sentence">
+          <span class="mode-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+          <span class="mode-label">جملو</span>
+        </button>
+      </div>
+
+      <!-- Sub-options (time durations, word counts) -->
+      <div class="sub-options">
+        <!-- Time sub-options -->
+        <button class="sub-option-btn visible active" data-mode="time" data-value="15">15s</button>
+        <button class="sub-option-btn visible" data-mode="time" data-value="30">30s</button>
+        <button class="sub-option-btn visible" data-mode="time" data-value="60">60s</button>
+        <button class="sub-option-btn visible" data-mode="time" data-value="120">120s</button>
+
+        <!-- Words sub-options -->
+        <button class="sub-option-btn" data-mode="words" data-value="10">10</button>
+        <button class="sub-option-btn" data-mode="words" data-value="25">25</button>
+        <button class="sub-option-btn" data-mode="words" data-value="50">50</button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Metrics Bar -->
+      <div class="metrics-bar">
+        <div class="metric" id="metric-wpm-container">
+          <span class="metric-value" id="metric-wpm">0</span>
+          <span class="metric-label">WPM</span>
+        </div>
+        <div class="metric" id="metric-accuracy-container">
+          <span class="metric-value" id="metric-accuracy">100%</span>
+          <span class="metric-label">درستي</span>
+        </div>
+        <div class="metric" id="metric-timer-container">
+          <span class="metric-value" id="metric-timer">-</span>
+          <span class="metric-label">وقت</span>
+        </div>
+        <div class="metric" id="metric-errors-container">
+          <span class="metric-value" id="metric-errors">0</span>
+          <span class="metric-label">غلطيون</span>
+        </div>
+      </div>
+
+      <!-- Text Display Area -->
+      <div class="text-display-wrapper">
+        <div class="source-badge-wrapper">
+          <span id="source-badge" class="source-badge"></span>
+        </div>
+        <div id="loading-spinner" class="loading-spinner">
+          <div class="spinner"></div>
+          <span>لوڊ ٿي رهيو آهي...</span>
+        </div>
+        <div id="text-display" class="text-display" dir="rtl">
+          <span class="loading-text">لوڊ ٿي رهيو آهي...</span>
+        </div>
+      </div>
+
+      <!-- Hidden Input (captures native keyboard) -->
+      <input
+        type="text"
+        id="hidden-input"
+        class="hidden-input"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        dir="rtl"
+        aria-label="Typing input area"
+      >
+
+      <!-- Zen mode finish button -->
+      <button id="zen-finish-btn" class="zen-finish-btn">
+        ختم ڪريو ✓
+      </button>
+
+      <!-- New Test button -->
+      <div class="action-buttons">
+        <button id="new-test-btn" class="new-test-btn" title="نئون ٽيسٽ">
+          <span class="btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></span>
+          <span class="btn-text">نئون ٽيسٽ</span>
+        </button>
+      </div>
+
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>ويڪيپيڊيا مان حقيقي سنڌي متن سان مشق ڪريو</p>
+    </footer>
+  </div>
+
+  <!-- Results Overlay -->
+  <div id="results-overlay" class="results-overlay" role="dialog" aria-label="Test results">
+    <div class="results-card">
+      <div class="results-header">
+        <h2>نتيجا</h2>
+        <div id="personal-best-badge" class="personal-best-badge">نئون ذاتي رڪارڊ!</div>
+      </div>
+
+      <div class="results-stats">
+        <div class="result-stat result-stat-primary">
+          <span class="stat-value" id="result-wpm">0</span>
+          <span class="stat-label">WPM</span>
+        </div>
+        <div class="result-stat">
+          <span class="stat-value" id="result-accuracy">0%</span>
+          <span class="stat-label">درستي</span>
+        </div>
+        <div class="result-stat">
+          <span class="stat-value" id="result-errors">0</span>
+          <span class="stat-label">غلطيون</span>
+        </div>
+        <div class="result-stat">
+          <span class="stat-value" id="result-time">0s</span>
+          <span class="stat-label">وقت</span>
+        </div>
+        <div class="result-stat">
+          <span class="stat-value" id="result-chars">0/0</span>
+          <span class="stat-label">اکر</span>
+        </div>
+      </div>
+
+      <div id="personal-best-info" class="personal-best-info"></div>
+
+      <!-- WPM Graph -->
+      <div class="result-section">
+        <canvas id="wpm-canvas" class="wpm-canvas"></canvas>
+      </div>
+
+      <!-- Mistake Heatmap -->
+      <div class="result-section">
+        <div id="heatmap-container" class="heatmap-container"></div>
+      </div>
+
+      <!-- Try Again button -->
+      <button id="try-again-btn" class="try-again-btn">
+        <span>ٻيهر ڪوشش ڪريو</span>
+        <span class="btn-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></span>
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
