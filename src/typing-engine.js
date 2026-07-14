@@ -21,6 +21,8 @@ export class TypingEngine {
    * @param {number} options.value - Duration (s) or word count
    */
   reset(options = {}) {
+    this.destroy();
+    
     this.targetText = options.targetText || '';
     this.mode = options.mode || 'time';
     this.modeValue = options.value || 60;
@@ -50,6 +52,7 @@ export class TypingEngine {
     this.onWarning = null;      // Called when invalid char is typed
     this.onComplete = null;     // Called when test is finished
     this.onTick = null;         // Called every second (timer update)
+    this.onNeedMoreText = null; // Called when text runs out in time mode
   }
 
   /**
@@ -176,6 +179,10 @@ export class TypingEngine {
     // Check completion
     if (this.checkCompletion()) {
       this.finishTest();
+    } else if (this.mode === 'time' && this.cursorPos >= this.targetText.length && !this.isFinished) {
+      if (this.onNeedMoreText) {
+        this.onNeedMoreText();
+      }
     }
 
     // Notify UI to update

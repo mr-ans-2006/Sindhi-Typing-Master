@@ -144,6 +144,37 @@ function wireEngineCallbacks() {
   engine.onTick = (timerDisplay) => {
     updateTimer(timerDisplay);
   };
+
+  let isFetchingMoreText = false;
+  engine.onNeedMoreText = async () => {
+    if (isFetchingMoreText) return;
+    isFetchingMoreText = true;
+    setLoading(true);
+
+    try {
+      const result = await getNextText({
+        mode: state.mode,
+        value: state.modeValue,
+      });
+
+      // Append new text with a space
+      state.targetText += ' ' + result.text;
+      engine.targetText = state.targetText;
+
+      // Re-render immediately
+      renderTargetText(state.targetText, engine.typedChars, engine.cursorPos);
+    } catch (err) {
+      console.error('Failed to load more text:', err);
+      // Fallback
+      state.targetText += ' سنڌي ٻولي هڪ قديم ٻولي آهي۔';
+      engine.targetText = state.targetText;
+      renderTargetText(state.targetText, engine.typedChars, engine.cursorPos);
+    }
+
+    setLoading(false);
+    isFetchingMoreText = false;
+    focusInput();
+  };
 }
 
 // ══════════════════════════════════
@@ -195,6 +226,13 @@ function setupNativeInput() {
     if (e.key === 'Backspace') {
       e.preventDefault();
       handleBackspace();
+    }
+    // End test on Enter
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (engine.isRunning && !engine.isFinished) {
+        engine.finishTest();
+      }
     }
     // Prevent Tab from leaving
     if (e.key === 'Tab') {

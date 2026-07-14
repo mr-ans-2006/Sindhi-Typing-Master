@@ -36,7 +36,7 @@ const SINDHI_WHITELIST = new Set([
   '\u06AA',       // ڪ  (kaaf Sindhi)
   '\u06BE',       // ھ  (haa doachashmee)
   '\u06BD',       // ۽  (Sindhi ampersand "and")
-  '\u06BE',       // ۾  — note: we add the actual char below
+  '\u06FE',       // ۾  (Sindhi postposition "in")
   
   // ── Standard Arabic letters used in Sindhi ──
   '\u0627',       // ا  alef
@@ -115,15 +115,6 @@ const SINDHI_WHITELIST = new Set([
   '\u0671',       // ٱ  alef wasla
   '\u06D3',       // ۓ  yeh barree with hamza
 ]);
-
-// Also add ۾ explicitly (U+06BE is shared with ھ, ۾ is U+06BE — 
-// actually ۾ is U+06BE — let's add the correct codepoint)
-SINDHI_WHITELIST.add('\u06BE'); // ھ
-SINDHI_WHITELIST.add('\u06BD'); // ۽ 
-// ۾ is actually U+06BE — it's the same glyph context-dependent
-// Let's add it as the actual character
-SINDHI_WHITELIST.add('۾');     // U+06BE context form / standalone ۾
-SINDHI_WHITELIST.add('۽');     // standalone add
 
 /**
  * Validates a single character against the Sindhi-Perso-Arabic whitelist.

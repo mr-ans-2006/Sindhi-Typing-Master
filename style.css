@@ -134,6 +134,7 @@ body::before {
 .logo-icon {
   font-size: 28px;
   filter: grayscale(0.3);
+  transform: translateY(3px);
 }
 
 .logo-text-sd {
@@ -142,6 +143,7 @@ body::before {
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: -0.02em;
+  line-height: 1;
 }
 
 /* ══════════════════════════════════
@@ -307,7 +309,8 @@ body::before {
   font-size: var(--text-size-display);
   line-height: 2.2;
   direction: rtl;
-  unicode-bidi: isolate;
+  white-space: pre-wrap;
+  word-wrap: break-word;
   user-select: none;
   overflow-y: auto;
   max-height: 240px;
@@ -341,11 +344,11 @@ body::before {
   position: relative;
 }
 
-/* Blinking cursor (RTL-aware — appears on the right side) */
+/* Blinking cursor (RTL-aware — appears on the left side) */
 .char-current::before {
   content: '';
   position: absolute;
-  right: -1px;
+  left: -1px;
   top: 8px;
   bottom: 8px;
   width: 2px;
@@ -362,8 +365,8 @@ body::before {
 /* Source badge */
 .source-badge-wrapper {
   position: absolute;
-  top: var(--space-sm);
-  left: var(--space-sm);
+  top: -12px;
+  left: 20px;
   z-index: 2;
 }
 
@@ -372,8 +375,8 @@ body::before {
   font-family: var(--font-arabic);
   font-size: var(--text-size-xs);
   color: var(--text-muted);
-  background: var(--bg-surface);
-  padding: 2px var(--space-sm);
+  background: var(--bg-secondary);
+  padding: 0 var(--space-sm);
   border-radius: var(--radius-pill);
   border: var(--border-subtle);
 }
@@ -423,12 +426,20 @@ body::before {
 /* ── Hidden Input ── */
 .hidden-input {
   position: absolute;
+  top: 0;
+  left: 0;
   opacity: 0;
   width: 1px;
   height: 1px;
   overflow: hidden;
+  color: transparent;
+  background: transparent;
+  caret-color: transparent;
+  border: none;
+  outline: none;
   /* Keep it focusable but invisible */
   pointer-events: none;
+  font-size: 16px; /* Prevents auto-zoom on iOS */
 }
 
 /* ══════════════════════════════════
@@ -826,12 +837,13 @@ body::before {
   }
 
   .text-display {
-    font-size: 24px;
+    font-size: 22px;
     line-height: 2;
   }
 
   .text-display-wrapper {
-    padding: var(--space-lg) var(--space-md);
+    padding: var(--space-lg) var(--space-sm);
+    min-height: 120px;
   }
 
   .metrics-bar {
@@ -867,8 +879,12 @@ body::before {
 
 @media (max-width: 480px) {
   .text-display {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.9;
+  }
+
+  .text-display-wrapper {
+    padding: var(--space-md) var(--space-xs);
   }
 
 
