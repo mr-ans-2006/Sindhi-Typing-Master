@@ -35,7 +35,7 @@ const SINDHI_WHITELIST = new Set([
   '\u06B3',       // ڳ  (gaa with dot below — implosive)
   '\u06AA',       // ڪ  (kaaf Sindhi)
   '\u06BE',       // ھ  (haa doachashmee)
-  '\u06BD',       // ۽  (Sindhi ampersand "and")
+  '\u06FD',       // ۽  (Sindhi ampersand "and")
   '\u06FE',       // ۾  (Sindhi postposition "in")
   
   // ── Standard Arabic letters used in Sindhi ──

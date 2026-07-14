@@ -945,3 +945,128 @@ body::before {
 .results-stats .result-stat:nth-child(3) { animation-delay: 0.15s; }
 .results-stats .result-stat:nth-child(4) { animation-delay: 0.2s; }
 .results-stats .result-stat:nth-child(5) { animation-delay: 0.25s; }
+
+/* ══════════════════════════════════
+   Virtual Keyboard
+   ══════════════════════════════════ */
+.virtual-keyboard-section {
+  margin-top: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.keyboard-toggle {
+  font-family: var(--font-arabic);
+  font-size: var(--text-size-sm);
+  color: var(--text-muted);
+}
+
+.keyboard-toggle label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: pointer;
+  user-select: none;
+}
+
+.virtual-keyboard-container {
+  width: 100%;
+  max-width: 800px;
+  background: var(--bg-surface);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: var(--border-subtle);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.virtual-keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* LTR is critical so keys align physically from left to right */
+  direction: ltr;
+}
+
+.vk-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.vk-key {
+  position: relative;
+  background: var(--bg-secondary);
+  border: var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  min-width: 44px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  user-select: none;
+  font-family: var(--font-arabic);
+}
+
+.vk-key:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--color-accent);
+}
+
+.vk-key:active {
+  transform: translateY(2px);
+  background: var(--bg-surface);
+}
+
+/* Dual labels */
+.vk-keycap {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.vk-char {
+  font-size: 22px;
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+/* Action Keys */
+.vk-key-action {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.vk-key-action .vk-char {
+  font-family: sans-serif;
+  font-size: 16px;
+  margin-top: 0;
+}
+
+.vk-key-bksp { width: 80px; }
+.vk-key-tab { width: 60px; }
+.vk-key-caps { width: 75px; }
+.vk-key-enter { width: 85px; }
+.vk-key-shift { width: 105px; }
+.vk-key-space {
+  width: 350px;
+}
+
+@media (max-width: 768px) {
+  .vk-key {
+    min-width: 30px;
+    height: 40px;
+  }
+  .vk-char { font-size: 18px; margin-top: 4px; }
+  .vk-keycap { font-size: 8px; top: 2px; left: 4px; }
+  .vk-key-space { width: 200px; }
+  .virtual-keyboard-container { padding: var(--space-sm); }
+}

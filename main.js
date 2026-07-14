@@ -8,6 +8,7 @@ import './style.css';
 import { isValidSindhiChar } from './src/sindhi-validator.js';
 import { getNextText, prefillCache } from './src/text-fetcher.js';
 import { TypingEngine } from './src/typing-engine.js';
+import { initKeyboard } from './src/keyboard.js';
 
 import {
   initDisplay,
@@ -46,7 +47,16 @@ async function init() {
   // Set up mode selector
   setupModeSelector();
 
-
+  // Initialize physical virtual keyboard
+  initKeyboard(
+    (char) => handleInput(char),
+    () => handleBackspace(),
+    () => {
+      if (engine.isRunning && !engine.isFinished) {
+        engine.finishTest();
+      }
+    }
+  );
 
   // Set up native input handling
   setupNativeInput();
