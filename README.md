@@ -27,8 +27,8 @@ Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/sindhi-typemaster.git
-cd sindhi-typemaster
+git clone https://github.com/mr-ans-2006/Sindhi-Typing-Master.git
+cd Sindhi-Typing-Master
 ```
 
 2. Install the dependencies:
