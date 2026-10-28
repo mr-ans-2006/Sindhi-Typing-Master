@@ -5,6 +5,7 @@
  */
 
 import './style.css';
+import './theme.css';
 import { isValidSindhiChar } from './src/sindhi-validator.js';
 import { getNextText, prefillCache } from './src/text-fetcher.js';
 import { TypingEngine } from './src/typing-engine.js';
@@ -64,6 +65,9 @@ async function init() {
   // Set up action buttons
   setupActionButtons();
 
+  // Set up look settings (background photo / glass blur toggles)
+  setupThemeToggles();
+
   // Load initial text
   await loadNewText();
 
@@ -104,7 +108,7 @@ async function loadNewText() {
     // Render the text
     renderTargetText(state.targetText, [], 0);
     updateSourceBadge(state.textSource);
-    updateMetrics(0, 100, state.mode === 'time' ? state.modeValue : '0', 0);
+    updateMetrics(0, 100, state.mode === 'time' ? state.modeValue : '0', 0, 0);
 
   } catch (err) {
     console.error('Failed to load text:', err);
@@ -134,12 +138,14 @@ function wireEngineCallbacks() {
     // Re-render text display
     renderTargetText(state.targetText, engine.typedChars, engine.cursorPos);
 
-    // Update live metrics
+    // Update live metrics (WPM label reads "live" because this is a
+    // momentary pace; the results screen shows the whole-test average)
     updateMetrics(
       engine.getWPM(),
       engine.getAccuracy(),
       engine.getTimerDisplay(),
       engine.errorCount,
+      engine.getCPM(),
     );
   };
 
@@ -253,7 +259,12 @@ function setupNativeInput() {
   // Re-focus on click anywhere in the text display area
   const textWrapper = document.querySelector('.text-display-wrapper');
   if (textWrapper) {
-    textWrapper.addEventListener('click', () => focusInput());
+    textWrapper.addEventListener('click', () => {
+      focusInput();
+      // On phones the system keyboard resizes the viewport; keep the
+      // passage visible above it instead of letting it get covered.
+      textWrapper.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
   }
 
   // Also re-focus on any click in the main content
@@ -354,6 +365,47 @@ function setupActionButtons() {
       }
     }
   });
+}
+
+// ══════════════════════════════════
+//  Look settings (background photo / glass blur)
+//  Both default ON and persist in localStorage. Turning the photo off
+//  restores the plain dark background; turning blur off makes panels
+//  fully solid (zero GPU blur cost on low-end phones).
+// ══════════════════════════════════
+
+function setupThemeToggles() {
+  const bgCb = document.getElementById('bg-toggle-cb');
+  const blurCb = document.getElementById('blur-toggle-cb');
+
+  const apply = () => {
+    document.body.classList.toggle('no-bg', bgCb && !bgCb.checked);
+    document.body.classList.toggle('no-blur', blurCb && !blurCb.checked);
+  };
+
+  try {
+    const savedBg = localStorage.getItem('stm-bg');
+    const savedBlur = localStorage.getItem('stm-blur');
+    if (bgCb && savedBg !== null) bgCb.checked = savedBg === '1';
+    if (blurCb && savedBlur !== null) blurCb.checked = savedBlur === '1';
+  } catch {
+    // localStorage unavailable: defaults (both on) stand
+  }
+
+  if (bgCb) {
+    bgCb.addEventListener('change', () => {
+      try { localStorage.setItem('stm-bg', bgCb.checked ? '1' : '0'); } catch { /* ignore */ }
+      apply();
+    });
+  }
+  if (blurCb) {
+    blurCb.addEventListener('change', () => {
+      try { localStorage.setItem('stm-blur', blurCb.checked ? '1' : '0'); } catch { /* ignore */ }
+      apply();
+    });
+  }
+
+  apply();
 }
 
 // ══════════════════════════════════
