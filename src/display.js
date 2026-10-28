@@ -5,7 +5,7 @@
 
 import { renderWpmGraph } from './wpm-graph.js';
 import { renderMistakeHeatmap } from './mistake-heatmap.js';
-import { getBest, saveBest } from './personal-best.js';
+import { getBest, saveBest, saveHistory, getHistory } from './personal-best.js';
 
 // ── DOM element references (cached on init) ──
 let els = {};
@@ -17,6 +17,7 @@ export function initDisplay() {
   els = {
     textDisplay: document.getElementById('text-display'),
     metricsWpm: document.getElementById('metric-wpm'),
+    metricsCpm: document.getElementById('metric-cpm'),
     metricsAccuracy: document.getElementById('metric-accuracy'),
     metricsTimer: document.getElementById('metric-timer'),
     metricsErrors: document.getElementById('metric-errors'),
@@ -24,12 +25,14 @@ export function initDisplay() {
     warningText: document.getElementById('warning-text'),
     resultsOverlay: document.getElementById('results-overlay'),
     resultWpm: document.getElementById('result-wpm'),
+    resultCpm: document.getElementById('result-cpm'),
     resultAccuracy: document.getElementById('result-accuracy'),
     resultErrors: document.getElementById('result-errors'),
     resultTime: document.getElementById('result-time'),
     resultChars: document.getElementById('result-chars'),
     wpmCanvas: document.getElementById('wpm-canvas'),
     heatmapContainer: document.getElementById('heatmap-container'),
+    historyContainer: document.getElementById('history-container'),
     personalBestBadge: document.getElementById('personal-best-badge'),
     personalBestInfo: document.getElementById('personal-best-info'),
     sourceBadge: document.getElementById('source-badge'),
@@ -78,8 +81,9 @@ export function renderTargetText(targetText, typedChars, cursorPos) {
 /**
  * Update live metrics display.
  */
-export function updateMetrics(wpm, accuracy, timer, errors) {
+export function updateMetrics(wpm, accuracy, timer, errors, cpm = 0) {
   if (els.metricsWpm) els.metricsWpm.textContent = Math.round(wpm);
+  if (els.metricsCpm) els.metricsCpm.textContent = Math.round(cpm);
   if (els.metricsAccuracy) els.metricsAccuracy.textContent = `${Math.round(accuracy)}%`;
   if (els.metricsTimer) els.metricsTimer.textContent = timer;
   if (els.metricsErrors) els.metricsErrors.textContent = errors;
@@ -119,6 +123,7 @@ export function showResults(metrics, targetText) {
 
   // Fill in stats
   if (els.resultWpm) els.resultWpm.textContent = metrics.wpm;
+  if (els.resultCpm) els.resultCpm.textContent = metrics.cpm ?? 0;
   if (els.resultAccuracy) els.resultAccuracy.textContent = `${metrics.accuracy}%`;
   if (els.resultErrors) els.resultErrors.textContent = metrics.errorCount;
   if (els.resultTime) els.resultTime.textContent = `${metrics.elapsed}s`;
@@ -156,6 +161,22 @@ export function showResults(metrics, targetText) {
       els.personalBestInfo.classList.add('visible');
     } else {
       els.personalBestInfo.classList.remove('visible');
+    }
+  }
+
+  // Save + show recent history (last 10 tests)
+  saveHistory(metrics);
+  if (els.historyContainer) {
+    const history = getHistory();
+    if (history.length > 0) {
+      const items = history.map((h) => {
+        const date = new Date(h.date).toLocaleDateString();
+        return `<li>${h.wpm} WPM • ${h.cpm ?? 0} CPM • ${h.accuracy}% • ${date}</li>`;
+      }).join('');
+      els.historyContainer.innerHTML =
+        `<div class="history-title">تازا نتيجا</div><ul class="history-list">${items}</ul>`;
+    } else {
+      els.historyContainer.innerHTML = '';
     }
   }
 
@@ -227,5 +248,5 @@ export function resetTextDisplay() {
   if (els.textDisplay) {
     els.textDisplay.innerHTML = '<span class="loading-text">لوڊ ٿي رهيو آهي...</span>';
   }
-  updateMetrics(0, 100, '-', 0);
+  updateMetrics(0, 100, '-', 0, 0);
 }
