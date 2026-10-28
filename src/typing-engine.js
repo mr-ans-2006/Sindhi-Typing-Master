@@ -271,6 +271,21 @@ export class TypingEngine {
   }
 
   /**
+   * Characters Per Minute — correct characters per minute. For Sindhi
+   * this is often the fairer speed number than WPM, because Sindhi
+   * words vary a lot in length and the 5-chars-per-word convention
+   * can under- or over-state real speed.
+   */
+  getCPM() {
+    if (!this.startTime) return 0;
+    const elapsed = this.isFinished
+      ? this.elapsed
+      : (Date.now() - this.startTime) / 1000;
+    if (elapsed <= 0) return 0;
+    return this.correctCount / (elapsed / 60);
+  }
+
+  /**
    * Get current accuracy percentage.
    */
   getAccuracy() {
@@ -284,6 +299,7 @@ export class TypingEngine {
   getMetrics() {
     return {
       wpm: Math.round(this.getWPM() * 10) / 10,
+      cpm: Math.round(this.getCPM() * 10) / 10,
       accuracy: Math.round(this.getAccuracy() * 10) / 10,
       correctCount: this.correctCount,
       errorCount: this.errorCount,
