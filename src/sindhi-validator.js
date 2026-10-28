@@ -16,7 +16,7 @@
 
 const SINDHI_WHITELIST = new Set([
   // ── Sindhi-specific characters ──
-  '\u0673',       // ٻ  (ba with dot below — implosive)
+  '\u067B',       // ٻ  (BEEH — Sindhi implosive b; was wrongly \u0673, a different letter that only looks like ٻ)
   '\u0680',       // ڀ  (bha)
   '\u067F',       // ٿ  (tha)
   '\u067D',       // ٽ  (tta)
