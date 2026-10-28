@@ -15,7 +15,7 @@
   --text-primary: #d4d4e8;
   --text-secondary: #8888aa;
   --text-muted: #555577;
-  --text-dim: #3a3a5c;
+  --text-dim: #8a8ab0;
 
   --color-correct: #00e676;
   --color-error: #ff5252;
@@ -237,6 +237,7 @@ body::before {
 
 .metrics-bar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: var(--space-2xl);
   padding: var(--space-md) 0;
@@ -1069,4 +1070,112 @@ body::before {
   .vk-keycap { font-size: 8px; top: 2px; left: 4px; }
   .vk-key-space { width: 200px; }
   .virtual-keyboard-container { padding: var(--space-sm); }
+}
+
+/* ══════════════════════════════════
+   Mobile keyboard + mobile fixes
+   ──────────────────────────────────
+   The desktop QWERTY guide keyboard is hidden on phones: its rows
+   add up to ~500px of fixed/minimum widths and get clipped on a
+   ~360px screen. Phones get the alphabet layout instead, whose keys
+   share each row (flex: 1) so they always fit, whatever the width.
+   ══════════════════════════════════ */
+
+/* Alphabet keyboard is phone-only by default */
+#mobile-keyboard-container {
+  display: none;
+}
+
+/* Shifted state on the desktop guide keyboard */
+.vk-key-shift.vk-shift-on {
+  background: var(--color-accent);
+  color: #1a1a2e;
+  border-color: var(--color-accent);
+}
+.vk-key-shift.vk-shift-on .vk-keycap,
+.vk-key-shift.vk-shift-on .vk-char {
+  color: #1a1a2e;
+}
+
+/* Alphabet keys: share the row, never overflow it */
+.vk-arow {
+  flex-wrap: nowrap;
+}
+.vk-mkey {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 48px;
+}
+.vk-mkey .vk-char {
+  font-size: 20px;
+  margin-top: 0;
+}
+.vk-mkey-space {
+  flex: 4 1 0;
+}
+.vk-mkey-bksp {
+  flex: 2 1 0;
+}
+.vk-mkey-bksp .vk-char {
+  font-family: sans-serif;
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  /* Swap keyboards: !important beats the toggle's inline style, so a
+     phone user can never be left with no keyboard at all. */
+  #virtual-keyboard-container {
+    display: none !important;
+  }
+  #mobile-keyboard-container {
+    display: block;
+  }
+  /* The guide toggle is meaningless on a phone — hide it entirely. */
+  .keyboard-toggle {
+    display: none;
+  }
+
+  /* Finish / New Test stay reachable: sticky bar at the bottom. */
+  .mobile-action-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 50;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-md) 0 calc(var(--space-md) + env(safe-area-inset-bottom));
+    margin-top: var(--space-md);
+    background: linear-gradient(transparent, var(--bg-primary) 35%);
+  }
+  .mobile-action-bar .zen-finish-btn {
+    margin: 0;
+  }
+  .mobile-action-bar .action-buttons {
+    margin-bottom: 0;
+  }
+
+  /* Tighter passage + keyboard spacing on phones */
+  .virtual-keyboard-section {
+    margin-top: var(--space-md);
+  }
+  .text-display {
+    line-height: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Smaller heatmap tiles so results never cramp on small phones */
+  .heatmap-cell {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  .vk-mkey {
+    height: 44px;
+  }
+  .vk-mkey .vk-char {
+    font-size: 18px;
+  }
 }
