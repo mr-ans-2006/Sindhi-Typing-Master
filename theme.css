@@ -1,0 +1,121 @@
+/* ══════════════════════════════════
+   Sindh landscape background + glass theme
+   ──────────────────────────────────
+   HONEST TRADE-OFFS (read before changing these numbers):
+   - The photo is ALWAYS dimmed by a dark overlay. A typing test
+     lives or dies on text contrast; a bright photo behind the
+     passage would make untyped text unreadable, especially outdoors.
+   - Glass (backdrop-filter blur) is applied to chrome panels only.
+     The passage box stays near-opaque on purpose: blur behind the
+     text you must read is a readability bug, not a feature.
+   - backdrop-filter is one of the most GPU-expensive CSS features.
+     On low-end Android phones it can stutter while typing, so the
+     Blur toggle exists and "off" means fully solid panels, not a
+     weaker blur. Both toggles persist in localStorage.
+   ══════════════════════════════════ */
+
+/* Background photo + dimming overlay, fixed behind everything */
+#bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url('./bg-sindh.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+#bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    rgba(10, 12, 26, 0.72),
+    rgba(10, 12, 26, 0.85)
+  );
+  pointer-events: none;
+}
+
+/* Background off: plain dark app, photo + overlay gone */
+body.no-bg #bg-layer,
+body.no-bg #bg-overlay {
+  display: none;
+}
+
+/* Glass panels: frosted, but never transparent enough to hurt text */
+.text-display-wrapper {
+  background: rgba(18, 22, 44, 0.86);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.virtual-keyboard-container {
+  background: rgba(20, 26, 52, 0.55);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.results-card {
+  background: rgba(20, 26, 52, 0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Blur off: solid panels, zero GPU blur cost (the low-end-phone fix) */
+body.no-blur .text-display-wrapper,
+body.no-blur .virtual-keyboard-container,
+body.no-blur .results-card {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--bg-secondary);
+}
+
+/* Theme toggles (Background / Blur) */
+.theme-toggles {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  margin-top: var(--space-sm);
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-arabic);
+  font-size: var(--text-size-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.theme-toggle input {
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+/* Recent history list in the results card */
+.history-container {
+  text-align: center;
+}
+
+.history-title {
+  font-family: var(--font-arabic);
+  font-size: var(--text-size-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.history-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--text-size-sm);
+  color: var(--text-secondary);
+}
