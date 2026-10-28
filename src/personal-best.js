@@ -86,6 +86,48 @@ export function getAllBests() {
   return loadBests();
 }
 
+// ── Recent history (last 10 tests, newest first) ──
+
+const HISTORY_KEY = 'sindhi-typemaster-history';
+const HISTORY_LIMIT = 10;
+
+function loadHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Prepend a finished test to the history, keeping only the last 10.
+ */
+export function saveHistory(metrics) {
+  try {
+    const history = loadHistory();
+    history.unshift({
+      wpm: Math.round(metrics.wpm * 10) / 10,
+      cpm: Math.round((metrics.cpm ?? 0) * 10) / 10,
+      accuracy: Math.round(metrics.accuracy * 10) / 10,
+      mode: metrics.mode,
+      modeValue: metrics.modeValue,
+      date: new Date().toISOString(),
+    });
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, HISTORY_LIMIT)));
+  } catch {
+    // localStorage might be full or disabled
+  }
+}
+
+/**
+ * @returns {Array} Newest-first list of recent tests (max 10).
+ */
+export function getHistory() {
+  return loadHistory();
+}
+
 /**
  * Clear all personal bests.
  */
