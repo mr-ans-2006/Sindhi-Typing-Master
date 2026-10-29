@@ -13,7 +13,7 @@
   - **جملو (Sentence):** type the displayed sentences exactly
 - **Real Sindhi text:** a random article from [sd.wikipedia.org](https://sd.wikipedia.org) is cleaned into typing-ready sentences. If the Wikipedia REST API fails it falls back to the Action API, and then to a built-in set of Sindhi sentences, so there's always something to type.
 - **Script check:** Latin letters are blocked with a warning, so you're actually practising Sindhi. Every keypress goes through one whitelist of Sindhi-Arabic characters.
-- **On-screen keyboards:** a desktop layout that maps a physical QWERTY keyboard to Sindhi letters (MBSindhi-style), and an alphabet layout that fits a phone screen.
+- **On-screen keyboards:** a desktop layout that maps a physical QWERTY keyboard to Sindhi letters (MBSindhi-style), and an alphabet layout that fits a phone screen. The phone layout has every Sindhi letter in alphabet order (ا ب ٻ ڀ ت ٿ ٽ ٺ ...), using the Sindhi ٽ ڙ ڍ rather than the Urdu ٹ ڑ ڈ, plus a row for the diacritics (zabar, zer, pesh and so on). On desktop, the `=` key is ڍ and `\` is ڊ; tapping the on-screen Shift opens the same full alphabet. `npm run check:keyboard` checks that every built-in sentence and every Sindhi letter can be typed on the phone keyboard.
 - **Stats:** live WPM and accuracy, a WPM-over-time graph drawn on canvas, and a heatmap of the characters you get wrong most often.
 - **Personal bests and history:** saved in your browser's `localStorage`, per mode.
 - **Sindh theme:** glass-style UI over a Sindh landscape background, with toggles for the photo and the blur. Uses Noto Sans Arabic for Sindhi text.
@@ -38,6 +38,12 @@ To make a production build:
 ```bash
 npm run build     # outputs to dist/
 npm run preview   # serves dist/ locally
+```
+
+To check the on-screen keyboard after changing its layout:
+
+```bash
+npm run check:keyboard
 ```
 
 ## Deploy to GitHub Pages (optional)

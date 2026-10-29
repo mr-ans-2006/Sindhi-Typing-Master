@@ -10,7 +10,7 @@ import { getSindhiRatio } from './sindhi-validator.js';
  */
 
 // ── Hardcoded fallback corpus (15 curated sentences) ──
-const FALLBACK_TEXTS = [
+export const FALLBACK_TEXTS = [
   'سنڌ جي ثقافت تمام پراڻي ۽ مالا مال آهي۔',
   'سنڌي ٻولي هڪ قديم ٻولي آهي جنهن جو پنهنجو ادب آهي۔',
   'موهن جو دڙو سنڌ جي تاريخ جو هڪ اهم حصو آهي۔',

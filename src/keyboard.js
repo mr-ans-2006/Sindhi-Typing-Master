@@ -19,7 +19,7 @@
  */
 
 // The layout mapping based on standard physical QWERTY rows
-const KEYBOARD_LAYOUT = [
+export const KEYBOARD_LAYOUT = [
   // Row 1: Number Row
   [
     { keycap: '`', sindhiChar: '`' },
@@ -34,7 +34,7 @@ const KEYBOARD_LAYOUT = [
     { keycap: '9', sindhiChar: '9' },
     { keycap: '0', sindhiChar: '0' },
     { keycap: '-', sindhiChar: 'ڏ' }, // Ddal
-    { keycap: '=', sindhiChar: 'ڈ' }, // Ddaal with tah
+    { keycap: '=', sindhiChar: 'ڍ' }, // Ddhal (Sindhi; ڊ is on the '\\' key)
     { keycap: 'Bksp', sindhiChar: '⌫', isAction: true, action: 'backspace' }
   ],
   // Row 2: Top Letter Row
@@ -90,25 +90,44 @@ const KEYBOARD_LAYOUT = [
 /**
  * Full Sindhi alphabet for the mobile layout. Every letter here is a
  * character the validator accepts, so any Wikipedia passage can be
- * typed from this keyboard alone. Both yeh forms (ي / ی) are included
- * because passages use both. Diacritics (zabar/zer/pesh) are left out:
- * they almost never appear in passages and the desktop layout omits
- * them too.
+ * typed from this keyboard alone.
  *
- * Rows are 10 keys wide; the last letter row holds 5 letters plus a
- * wide Space key and Backspace. Digit row covers years/numbers in text.
+ * The first five rows are the Sindhi alphabet in its own order
+ * (ا ب ٻ ڀ ت ٿ ٽ ٺ پ ث ج ...), so every Sindhi letter sits where a
+ * Sindhi reader expects it. These are the Sindhi letters, not the Urdu
+ * look-alikes: ٽ (not ٹ), ڙ (not ڑ), ڍ (not ڈ). The digraphs جھ and
+ * گھ are typed as the letter followed by ھ.
+ *
+ * Row 6 holds ء ي plus the other forms that show up in passages (both
+ * yeh forms, ے, ہ, ۽ ۾, the hamza forms). Row 7 holds the rarer Arabic
+ * forms and the diacritics (zabar, zer, pesh, shadd, sukun, khari
+ * zabar), because built-in sentences like "مهمان نوازيءَ لاءِ" use them.
+ *
+ * Rows are 10 keys wide; the punctuation row holds 3 keys plus a wide
+ * Space key and Backspace. Digit row covers years/numbers in text.
+ * Run `npm run check:keyboard` after editing these rows.
  */
 export const MOBILE_KEYBOARD_ROWS = [
-  ['ا', 'ب', 'پ', 'ت', 'ٹ', 'ث', 'ج', 'چ', 'ح', 'خ'],
-  ['د', 'ڈ', 'ذ', 'ر', 'ڑ', 'ز', 'ژ', 'س', 'ش', 'ص'],
-  ['ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ک', 'گ', 'ل'],
-  ['م', 'ن', 'و', 'ہ', 'ي', 'ی', 'ے', 'ٻ', 'ڄ', 'ڃ'],
-  ['ڇ', 'ڏ', 'ڊ', 'ڌ', 'ڦ', 'ڻ', 'ڱ', 'ڳ', 'ڪ', 'ھ'],
-  ['۽', '۾', 'آ', 'ئ', 'ؤ', 'ء', 'أ', 'إ', 'ة', 'ى'],
-  // Special row: remaining letters + space + backspace (handled in render)
-  ['ڀ', 'ه', '۔', '،', '؟'],
+  ['ا', 'ب', 'ٻ', 'ڀ', 'ت', 'ٿ', 'ٽ', 'ٺ', 'پ', 'ث'],
+  ['ج', 'ڄ', 'ڃ', 'چ', 'ڇ', 'ح', 'خ', 'د', 'ڌ', 'ڏ'],
+  ['ڊ', 'ڍ', 'ذ', 'ر', 'ڙ', 'ز', 'ژ', 'س', 'ش', 'ص'],
+  ['ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ڦ', 'ق', 'ڪ', 'ک'],
+  ['گ', 'ڳ', 'ڱ', 'ل', 'م', 'ن', 'ڻ', 'و', 'ه', 'ھ'],
+  ['ء', 'ي', 'ی', 'ے', 'ہ', '۽', '۾', 'آ', 'ئ', 'ؤ'],
+  ['أ', 'إ', 'ة', 'ى', '\u064E', '\u0650', '\u064F', '\u0651', '\u0652', '\u0670'],
+  // Special row: punctuation + space + backspace (handled in render)
+  ['۔', '،', '؟'],
   ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
 ];
+
+// Diacritics are combining marks: on their own they render as a dotted
+// circle, so their keys show them on a tatweel (ـَ). Tapping still types
+// only the mark itself.
+const DIACRITICS = new Set(['\u064E', '\u0650', '\u064F', '\u0651', '\u0652', '\u0670']);
+
+function keyLabel(ch) {
+  return DIACRITICS.has(ch) ? '\u0640' + ch : ch;
+}
 
 // Sanity check hook for tests: every letter the validator lists for
 // keyboards must exist on the mobile layout (plus digits/punctuation).
@@ -278,7 +297,7 @@ function renderAlphaRows(keyboardEl, onKeyPress, onBackspace) {
       keyEl.className = 'vk-key vk-mkey';
       const charEl = document.createElement('span');
       charEl.className = 'vk-char';
-      charEl.textContent = ch;
+      charEl.textContent = keyLabel(ch);
       keyEl.appendChild(charEl);
       keyEl.addEventListener('mousedown', (e) => e.preventDefault());
           keyEl.addEventListener('click', (e) => {
