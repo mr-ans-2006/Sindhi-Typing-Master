@@ -52,7 +52,9 @@ export function initDisplay() {
 export function renderTargetText(targetText, typedChars, cursorPos) {
   if (!els.textDisplay) return;
 
-  let html = '';
+  // Built with textContent (not innerHTML) so text fetched from
+  // Wikipedia can never be interpreted as HTML.
+  const fragment = document.createDocumentFragment();
   for (let i = 0; i < targetText.length; i++) {
     let className = 'char-untyped';
     
@@ -66,10 +68,13 @@ export function renderTargetText(targetText, typedChars, cursorPos) {
 
     // Handle space characters visually
     const displayChar = targetText[i] === ' ' ? '\u00A0' : targetText[i];
-    html += `<span class="${className}">${displayChar}</span>`;
+    const span = document.createElement('span');
+    span.className = className;
+    span.textContent = displayChar;
+    fragment.appendChild(span);
   }
 
-  els.textDisplay.innerHTML = html;
+  els.textDisplay.replaceChildren(fragment);
 
   // Auto-scroll to keep cursor visible
   const currentChar = els.textDisplay.querySelector('.char-current');
@@ -169,12 +174,19 @@ export function showResults(metrics, targetText) {
   if (els.historyContainer) {
     const history = getHistory();
     if (history.length > 0) {
-      const items = history.map((h) => {
+      // History comes from localStorage, so render it as text, not HTML
+      const title = document.createElement('div');
+      title.className = 'history-title';
+      title.textContent = 'تازا نتيجا';
+      const list = document.createElement('ul');
+      list.className = 'history-list';
+      for (const h of history) {
         const date = new Date(h.date).toLocaleDateString();
-        return `<li>${h.wpm} WPM • ${h.cpm ?? 0} CPM • ${h.accuracy}% • ${date}</li>`;
-      }).join('');
-      els.historyContainer.innerHTML =
-        `<div class="history-title">تازا نتيجا</div><ul class="history-list">${items}</ul>`;
+        const li = document.createElement('li');
+        li.textContent = `${h.wpm} WPM • ${h.cpm ?? 0} CPM • ${h.accuracy}% • ${date}`;
+        list.appendChild(li);
+      }
+      els.historyContainer.replaceChildren(title, list);
     } else {
       els.historyContainer.innerHTML = '';
     }
